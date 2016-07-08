@@ -8,6 +8,8 @@
 
 #include <CIEDE2000.h>
 
+#include "core.hpp"
+
 /*******************************************************************************
  * Conversions.
  ******************************************************************************/
@@ -45,18 +47,18 @@ CIEDE2000::CIEDE2000(
 	 * Step 1 
 	 */
 	/* Equation 2 */
-	double C1 = sqrt((lab1.a * lab1.a) + (lab1.b * lab1.b));
-	double C2 = sqrt((lab2.a * lab2.a) + (lab2.b * lab2.b));
+    double C1 = cv::sqrt((lab1.a * lab1.a) + (lab1.b * lab1.b));
+    double C2 = cv::sqrt((lab2.a * lab2.a) + (lab2.b * lab2.b));
 	/* Equation 3 */
 	double barC = (C1 + C2) / 2.0;
 	/* Equation 4 */
-	double G = 0.5 * (1 - sqrt(pow(barC, 7) / (pow(barC, 7) + pow25To7)));
+    double G = 0.5 * (1 - cv::sqrt(cv::pow(barC, 7) / (pow(barC, 7) + pow25To7)));
 	/* Equation 5 */
 	double a1Prime = (1.0 + G) * lab1.a;
 	double a2Prime = (1.0 + G) * lab2.a;
 	/* Equation 6 */
-	double CPrime1 = sqrt((a1Prime * a1Prime) + (lab1.b * lab1.b));
-	double CPrime2 = sqrt((a2Prime * a2Prime) + (lab2.b * lab2.b));
+    double CPrime1 = cv::sqrt((a1Prime * a1Prime) + (lab1.b * lab1.b));
+    double CPrime2 = cv::sqrt((a2Prime * a2Prime) + (lab2.b * lab2.b));
 	/* Equation 7 */
 	double hPrime1;
 	if (lab1.b == 0 && a1Prime == 0)
@@ -104,7 +106,7 @@ CIEDE2000::CIEDE2000(
 			deltahPrime -= deg360InRad;
 	}
 	/* Equation 11 */
-	double deltaHPrime = 2.0 * sqrt(CPrimeProduct) *
+    double deltaHPrime = 2.0 * cv::sqrt(CPrimeProduct) *
 	    sin(deltahPrime / 2.0);
 	
 	/*
@@ -135,13 +137,13 @@ CIEDE2000::CIEDE2000(
 	    (0.20 * cos((4.0 * barhPrime) - CIEDE2000::deg2Rad(63.0)));
 	/* Equation 16 */
 	double deltaTheta = CIEDE2000::deg2Rad(30.0) *
-	    exp(-pow((barhPrime - deg2Rad(275.0)) / deg2Rad(25.0), 2.0));
+    cv::exp(-cv::pow((barhPrime - deg2Rad(275.0)) / deg2Rad(25.0), 2.0));
 	/* Equation 17 */
-	double R_C = 2.0 * sqrt(pow(barCPrime, 7.0) /
-	    (pow(barCPrime, 7.0) + pow25To7));
+    double R_C = 2.0 * cv::sqrt(cv::pow(barCPrime, 7.0) /
+	    (cv::pow(barCPrime, 7.0) + pow25To7));
 	/* Equation 18 */
-	double S_L = 1 + ((0.015 * pow(barLPrime - 50.0, 2.0)) /
-	    sqrt(20 + pow(barLPrime - 50.0, 2.0)));
+    double S_L = 1 + ((0.015 * cv::pow(barLPrime - 50.0, 2.0)) /
+	    cv::sqrt(20 + cv::pow(barLPrime - 50.0, 2.0)));
 	/* Equation 19 */
 	double S_C = 1 + (0.045 * barCPrime);
 	/* Equation 20 */
@@ -150,10 +152,10 @@ CIEDE2000::CIEDE2000(
 	double R_T = (-sin(2.0 * deltaTheta)) * R_C;
 	
 	/* Equation 22 */
-	double deltaE = sqrt(
-	    pow(deltaLPrime / (k_L * S_L), 2.0) +
-	    pow(deltaCPrime / (k_C * S_C), 2.0) +
-	    pow(deltaHPrime / (k_H * S_H), 2.0) + 
+	double deltaE = cv::sqrt(
+	    cv::pow(deltaLPrime / (k_L * S_L), 2.0) +
+	    cv::pow(deltaCPrime / (k_C * S_C), 2.0) +
+	    cv::pow(deltaHPrime / (k_H * S_H), 2.0) +
 	    (R_T * (deltaCPrime / (k_C * S_C)) * (deltaHPrime / (k_H * S_H))));
 	
 	return (deltaE);
