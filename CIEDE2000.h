@@ -8,6 +8,7 @@
 #define GPF_CIEDE2000_H_
 
 #include <ostream>
+#include "core.hpp"
 
 #ifndef M_PI
 #define M_PI        3.14159265358979323846264338327950288   /* pi */
@@ -16,23 +17,6 @@
 /** Namespace containing all necessary objects and methods for CIEDE2000 */
 namespace CIEDE2000
 {
-	/***********************************************************************
-	 * Types.
-	 **********************************************************************/
-
-	/** A color in CIELAB colorspace */
-	struct LAB
-	{
-		/** Lightness */
-		double l;
-		/** Color-opponent a dimension */
-		double a;
-		/** Color-opponent b dimension */
-		double b;
-	};
-	/** Convenience definition for struct LAB */
-	using LAB = struct LAB;
-
 	/***********************************************************************
 	 * Operations.
 	 **********************************************************************/
@@ -56,8 +40,8 @@ namespace CIEDE2000
 	 */
 	double
 	CIEDE2000(
-	    const LAB &lab1,
-	    const LAB &lab2);
+              const cv::Vec3f &lab1,
+              const cv::Vec3f &lab2);
 	    
 	/***********************************************************************
 	 * Conversions.
@@ -111,7 +95,7 @@ namespace CIEDE2000
 std::ostream&
 operator<<(
     std::ostream &s,
-    const CIEDE2000::LAB &labColor);
+    const cv::Vec3f &labColor);
     
 #endif /* GPF_CIEDE2000_H_ */
 

@@ -8,7 +8,6 @@
 
 #include <CIEDE2000.h>
 
-#include "core.hpp"
 
 /*******************************************************************************
  * Conversions.
@@ -30,8 +29,8 @@ CIEDE2000::rad2Deg(
 
 double
 CIEDE2000::CIEDE2000(
-    const LAB &lab1,
-    const LAB &lab2)
+    const cv::Vec3f &lab1,
+    const cv::Vec3f &lab2)
 {
 	/* 
 	 * "For these and all other numerical/graphical 􏰀delta E00 values
@@ -47,24 +46,24 @@ CIEDE2000::CIEDE2000(
 	 * Step 1 
 	 */
 	/* Equation 2 */
-    double C1 = cv::sqrt((lab1.a * lab1.a) + (lab1.b * lab1.b));
-    double C2 = cv::sqrt((lab2.a * lab2.a) + (lab2.b * lab2.b));
+    double C1 = cv::sqrt((lab1[1] * lab1[1]) + (lab1[2] * lab1[2]));
+    double C2 = cv::sqrt((lab2[1] * lab2[1]) + (lab2[2] * lab2[2]));
 	/* Equation 3 */
 	double barC = (C1 + C2) / 2.0;
 	/* Equation 4 */
     double G = 0.5 * (1 - cv::sqrt(cv::pow(barC, 7) / (pow(barC, 7) + pow25To7)));
 	/* Equation 5 */
-	double a1Prime = (1.0 + G) * lab1.a;
-	double a2Prime = (1.0 + G) * lab2.a;
+	double a1Prime = (1.0 + G) * lab1[1];
+	double a2Prime = (1.0 + G) * lab2[1];
 	/* Equation 6 */
-    double CPrime1 = cv::sqrt((a1Prime * a1Prime) + (lab1.b * lab1.b));
-    double CPrime2 = cv::sqrt((a2Prime * a2Prime) + (lab2.b * lab2.b));
+    double CPrime1 = cv::sqrt((a1Prime * a1Prime) + (lab1[2] * lab1[2]));
+    double CPrime2 = cv::sqrt((a2Prime * a2Prime) + (lab2[2] * lab2[2]));
 	/* Equation 7 */
 	double hPrime1;
-	if (lab1.b == 0 && a1Prime == 0)
+	if (lab1[2] == 0 && a1Prime == 0)
 		hPrime1 = 0.0;
 	else {
-		hPrime1 = atan2(lab1.b, a1Prime);
+		hPrime1 = atan2(lab1[2], a1Prime);
 		/* 
 		 * This must be converted to a hue angle in degrees between 0 
 		 * and 360 by addition of 2􏰏 to negative hue angles.
@@ -73,10 +72,10 @@ CIEDE2000::CIEDE2000(
 			hPrime1 += deg360InRad;
 	}
 	double hPrime2;
-	if (lab2.b == 0 && a2Prime == 0)
+	if (lab2[2] == 0 && a2Prime == 0)
 		hPrime2 = 0.0;
 	else {
-		hPrime2 = atan2(lab2.b, a2Prime);
+		hPrime2 = atan2(lab2[2], a2Prime);
 		/* 
 		 * This must be converted to a hue angle in degrees between 0 
 		 * and 360 by addition of 2􏰏 to negative hue angles.
@@ -89,7 +88,7 @@ CIEDE2000::CIEDE2000(
 	 * Step 2
 	 */
 	/* Equation 8 */
-	double deltaLPrime = lab2.l - lab1.l;
+	double deltaLPrime = lab2[0] - lab1[0];
 	/* Equation 9 */
 	double deltaCPrime = CPrime2 - CPrime1;
 	/* Equation 10 */
@@ -113,7 +112,7 @@ CIEDE2000::CIEDE2000(
 	 * Step 3
 	 */
 	/* Equation 12 */
-	double barLPrime = (lab1.l + lab2.l) / 2.0;
+	double barLPrime = (lab1[0] + lab2[0]) / 2.0;
 	/* Equation 13 */
 	double barCPrime = (CPrime1 + CPrime2) / 2.0;
 	/* Equation 14 */
@@ -168,9 +167,9 @@ CIEDE2000::CIEDE2000(
 std::ostream&
 operator<<(
     std::ostream &s,
-    const CIEDE2000::LAB &labColor)
+           const cv::Vec3f &labColor)
 {
-	return (s << "CIELAB(" << labColor.l << "," << labColor.a << "," <<
-	    labColor.b << ")");
+	return (s << "CIELAB(" << labColor[0] << "," << labColor[1] << "," <<
+	    labColor[2] << ")");
 }
 
