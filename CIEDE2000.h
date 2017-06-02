@@ -7,7 +7,8 @@
 #ifndef GPF_CIEDE2000_H_
 #define GPF_CIEDE2000_H_
 
-#include <ostream>
+#include <ctime>
+#include <cmath>
 #include "core.hpp"
 
 #ifndef M_PI

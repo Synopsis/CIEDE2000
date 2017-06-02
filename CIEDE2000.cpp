@@ -4,8 +4,6 @@
  * See LICENSE for details.
  */
 
-#include <cmath>
-
 #include "CIEDE2000.h"
 
 
